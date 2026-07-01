@@ -1,0 +1,114 @@
+/* Lüks cam/blur gate görünümü */
+.gate-overlay{
+  position:fixed; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  background: radial-gradient(1200px 800px at 20% 20%, rgba(255,255,255,.45), rgba(0,0,0,.02)),
+              radial-gradient(1000px 900px at 80% 0%, rgba(255,255,255,.35), rgba(0,0,0,.02)),
+              var(--bg, #f9d5d3);
+  z-index:130000;
+  transition: opacity .3s ease;
+}
+.gate-overlay.hide{ opacity:0; pointer-events:none; }
+
+.gate-card{
+  width:min(420px, 92vw);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 20px;
+  padding: 22px 18px 16px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.18), 0 0 0 1px rgba(255,255,255,.4) inset;
+  position: relative;
+  animation: cardIn .35s ease both;
+}
+@keyframes cardIn{ from{ transform: translateY(8px); opacity:0;} to{ transform: translateY(0); opacity:1;} }
+.gate-card.shake{ animation: shake .45s ease; }
+@keyframes shake{
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+.gate-logo{
+  font-weight:900; letter-spacing:1.1px; margin-bottom:6px;
+  background:linear-gradient(180deg,#444,#111);
+  -webkit-background-clip:text; color:transparent; font-size:20px;
+}
+.gate-title{ font-weight:800; font-size:18px; }
+.gate-sub{ margin: 6px 0 12px; }
+
+.gate-input-wrap{
+  display:flex; align-items:center; gap:8px;
+  background:#fff; border:1px solid #e6e6e6; border-radius:14px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+  padding: 6px 6px 6px 12px;
+}
+#gate-input{
+  flex:1; border:none; outline:none; background:transparent;
+  padding:10px 4px; font-size:16px;
+}
+.gate-submit{
+  width:42px; height:42px; border:none; border-radius:12px;
+  background:#111; color:#fff; font-weight:900; cursor:pointer;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+  transition: transform .12s, filter .2s;
+}
+.gate-submit:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+
+.gate-hint{ min-height:20px; font-size:13px; color:#666; margin-top:8px; }
+.gate-hint.error{ color:#c33434; }
+.gate-foot{ margin-top:14px; font-size:12px; text-align:center; }
+
+/* DENIZIM gate renk temasi */
+.gate-overlay{
+  background:
+    radial-gradient(1100px 760px at 18% 16%, rgba(255,182,193,.52), transparent 58%),
+    radial-gradient(900px 700px at 84% 0%, rgba(0,128,128,.18), transparent 58%),
+    linear-gradient(180deg,#fff7f8,#ffe3e8 54%,#ffb6c1);
+}
+.gate-card{
+  background:rgba(255,247,248,.8);
+  border-color:rgba(255,182,193,.68);
+  box-shadow:0 30px 80px rgba(82,54,41,.2), 0 0 0 1px rgba(255,255,255,.42) inset;
+}
+.gate-logo{
+  background:linear-gradient(180deg,#523629,#008080);
+  -webkit-background-clip:text;
+  background-clip:text;
+}
+.gate-logo{
+  width:min(340px, 84vw);
+  aspect-ratio:1138 / 401;
+  height:auto;
+  margin:0 auto 10px;
+  background:none;
+  color:transparent;
+  font-size:0;
+  border-radius:26px;
+  overflow:hidden;
+}
+.gate-logo-img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:26px;
+  box-shadow:0 10px 26px rgba(82,54,41,.14);
+}
+.gate-title{ color:#523629; }
+.gate-input-wrap{
+  background:rgba(255,255,255,.82);
+  border-color:rgba(255,182,193,.72);
+}
+.gate-input-wrap:focus-within{
+  border-color:#008080;
+  box-shadow:0 0 0 4px rgba(0,128,128,.12), inset 0 1px 2px rgba(82,54,41,.06);
+}
+.gate-submit{
+  background:linear-gradient(135deg,#008080,#523629);
+  box-shadow:0 12px 26px rgba(0,128,128,.22);
+}
+.gate-hint{ color:rgba(82,54,41,.68); }
+.gate-hint.error{ color:#523629; }

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>2048</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="../assets/css/gate.css" rel="stylesheet">
+  <link href="../assets/css/2048.css" rel="stylesheet">
+  <script src="../assets/js/gate.js" defer></script>
+  <script src="../assets/js/ui.js" defer></script>
+  <script src="../assets/js/2048.js" defer></script>
+</head>
+<body>
+  <div id="loader-overlay" class="hidden" aria-hidden="true">
+    <canvas id="dotlottie-canvas" width="600" height="600"></canvas>
+  </div>
+
+  <div id="gate-overlay" class="gate-overlay" aria-hidden="false">
+    <div class="gate-card">
+      <div class="gate-logo"><img class="gate-logo-img" src="../assets/media/brownie-logo-cropped.png" alt="Logo"></div>
+      <div class="gate-title">Giriş</div>
+      <p class="gate-sub muted">Devam etmek için şifreyi gir.</p>
+      <form id="gate-form" autocomplete="off">
+        <div class="gate-input-wrap">
+          <input id="gate-input" type="password" inputmode="numeric" placeholder="Şifre (8 hane)" maxlength="12" />
+          <button class="gate-submit" type="submit" aria-label="Giriş">→</button>
+        </div>
+        <div id="gate-hint" class="gate-hint" role="status" aria-live="polite"></div>
+      </form>
+      <div class="gate-foot muted">© <span id="y"></span> — Özel erişim</div>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a class="brand logo-brand" href="../index.html"><img class="brand-logo-img" src="../assets/media/brownie-logo-cropped.png" alt="Logo"></a>
+    <div class="spacer"></div>
+    <a class="nav-link" href="../index.html">Ana Sayfa</a>
+    <div class="dropdown" data-dropdown>
+      <button class="drop-btn" data-dropdown-button>Projeler ▾</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="tarot.html">Tarot Falı</a>
+        <a class="dropdown-item" href="2048.html">2048</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="page-wrap page-2048">
+    <section class="game-shell">
+      <div class="glass-orb orb-a"></div>
+      <div class="glass-orb orb-b"></div>
+      <div class="glass-orb orb-c"></div>
+
+      <header class="game-hero">
+        <div>
+          <span class="hero-pill">Oyun • Akademik Geçiş</span>
+          <h1>2048</h1>
+          <p class="hero-copy">Oyun açılmadan önce rastgele bir hazırlık sorusu gelir. Doğru cevabı bulunca oyun aktif olur.</p>
+        </div>
+        <div class="hero-actions">
+          <button id="new-game-btn" class="lux-btn">Yeni Oyun</button>
+          <div class="lock-chip" id="lock-chip">Soru bekleniyor</div>
+        </div>
+      </header>
+
+      <section class="hud-grid" aria-label="Oyun bilgileri">
+        <article class="hud-card">
+          <span>Skor</span>
+          <strong id="score">0</strong>
+        </article>
+        <article class="hud-card">
+          <span>En iyi (bu cihaz)</span>
+          <strong id="best-score">0</strong>
+        </article>
+        <article class="hud-card">
+          <span>Hamle</span>
+          <strong id="move-count">0</strong>
+        </article>
+        <article class="hud-card">
+          <span>Hedef</span>
+          <strong id="target-status">8192</strong>
+        </article>
+      </section>
+
+      <section class="game-layout">
+        <div class="board-card">
+          <div class="board-topline">
+            <div>
+              <small>Modern 2048</small>
+              <strong>2048 / 4096 / 8192</strong>
+            </div>
+            <div class="board-inline-note" id="inline-note">Soruyu çöz, alan açılsın.</div>
+          </div>
+
+          <div id="board-shell" class="board-shell locked" aria-label="2048 oyun alanı">
+            <div class="board-grid" aria-hidden="true">
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+              <div></div><div></div><div></div><div></div>
+            </div>
+            <div id="tile-layer" class="tile-layer"></div>
+            <div id="particle-layer" class="particle-layer" aria-hidden="true"></div>
+          </div>
+
+          <div id="game-message" class="game-message" aria-live="polite"></div>
+        </div>
+
+        <aside class="side-card">
+          <div class="side-section">
+            <span class="side-label">Giriş kuralı</span>
+            <h2>Hazırlık sorusunu doğru çöz</h2>
+            <p>Yanlış cevapta oyun açılmaz. Sistem yeni bir rastgele soru getirir ve doğruya kadar devam eder.</p>
+          </div>
+
+          <div class="target-list" aria-label="Taş hedefleri">
+            <div class="target-pill">2048 <span>İlk büyük hedef</span></div>
+            <div class="target-pill">4096 <span>İleri seviye akış</span></div>
+            <div class="target-pill danger">8192 <span>Büyük Ödül açılır</span></div>
+          </div>
+
+          <div class="side-section compact">
+            <span class="side-label">Kontroller</span>
+            <p>← ↑ → ↓ veya W A S D kullan. Telefonda kaydırma hareketi desteklenir.</p>
+          </div>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <div id="quiz-overlay" class="quiz-overlay" aria-hidden="false">
+    <div class="quiz-card">
+      <div id="user-stage" class="quiz-stage selector-stage">
+        <div class="quiz-badge">Oyuncu seçimi</div>
+        <h2>Kim oynuyor?</h2>
+        <p class="quiz-copy">Başlamadan önce kullanıcı seç. Hakan ve Deniz için en yüksek skorlar ayrı tutulur.</p>
+
+        <div class="player-grid" aria-label="Oyuncu seçimi">
+          <button type="button" class="player-option" data-player="Hakan">
+            <span class="player-kicker">Kullanıcı 1</span>
+            <strong>Hakan</strong>
+            <span class="player-meta">Bu cihazdaki en yüksek skor</span>
+            <b data-player-best="Hakan">0</b>
+          </button>
+          <button type="button" class="player-option" data-player="Deniz">
+            <span class="player-kicker">Kullanıcı 2</span>
+            <strong>Deniz</strong>
+            <span class="player-meta">Bu cihazdaki en yüksek skor</span>
+            <b data-player-best="Deniz">0</b>
+          </button>
+        </div>
+
+        <div id="player-feedback" class="quiz-feedback" aria-live="polite">Bir oyuncu seç ve soruya geç.</div>
+      </div>
+
+      <div id="question-stage" class="quiz-stage hidden">
+        <div class="quiz-badge">Akademik geçiş</div>
+        <h2>2048 kilidini aç</h2>
+        <p class="quiz-copy">Aşağıdaki rastgele soruyu doğru cevapla. Yanlış cevapta yeni soru gelir.</p>
+
+        <div class="quiz-meta">
+          <span id="quiz-subject">Ders</span>
+          <span id="quiz-player" class="quiz-player">Oyuncu: -</span>
+          <span id="quiz-counter">1 / 500</span>
+        </div>
+
+        <div id="quiz-question" class="quiz-question">Soru yükleniyor...</div>
+        <div id="quiz-options" class="quiz-options"></div>
+        <div id="quiz-feedback" class="quiz-feedback" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="jumpscare-overlay" class="jumpscare-overlay hidden" aria-hidden="true">
+    <div class="jumpscare-flash"></div>
+    <img src="../assets/media/phantom-jumpscare.gif" alt="Büyük ödül görseli" class="jumpscare-media">
+    <div class="jumpscare-controls">
+      <button id="close-jumpscare" class="lux-btn ghost">Kapat</button>
+    </div>
+  </div>
+
+  <audio id="jumpscare-audio" preload="auto" src="https://upload.wikimedia.org/wikipedia/commons/d/d9/Wilhelm_Scream.ogg"></audio>
+
+  <script type="module">
+    import { DotLottie } from "https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web/+esm";
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.getElementById("dotlottie-canvas"),
+      src: "https://lottie.host/5bff608f-bb24-4f26-9d58-c91f25c2ab23/KfmHyRGjkq.lottie"
+    });
+    const yEl = document.getElementById('y'); if (yEl) yEl.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Tarot Falı</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="../assets/css/style.css" rel="stylesheet">
+  <link href="../assets/css/gate.css" rel="stylesheet">
+  <link href="../assets/css/tarot.css" rel="stylesheet">
+  <script src="../assets/js/gate.js" defer></script>
+  <script src="../assets/js/ui.js" defer></script>
+  <script src="../assets/js/tarot.js" defer></script>
+</head>
+<body class="tarot-page">
+  <!-- LOADER (başlangıçta gizli) -->
+  <div id="loader-overlay" class="hidden">
+    <canvas id="dotlottie-canvas" width="600" height="600"></canvas>
+  </div>
+
+  <!-- GATE (Şifre Kapısı) -->
+  <div id="gate-overlay" class="gate-overlay" aria-hidden="false">
+    <div class="gate-card">
+      <div class="gate-logo"><img class="gate-logo-img" src="../assets/media/brownie-logo-cropped.png" alt="Logo"></div>
+      <div class="gate-title">Giriş</div>
+      <p class="muted">Devam etmek için şifreyi gir:</p>
+      <form id="gate-form" autocomplete="off">
+        <input id="gate-input" type="password" inputmode="numeric" placeholder="Şifre" />
+        <button type="submit" class="btn" style="width:100%;margin-top:8px;">Giriş Yap</button>
+        <div id="gate-hint" class="muted" style="margin-top:6px"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="brand logo-brand" href="../index.html"><img class="brand-logo-img" src="../assets/media/brownie-logo-cropped.png" alt="Logo"></a>
+    <div class="spacer"></div>
+    <a class="nav-link" href="../index.html">Ana Sayfa</a>
+    <div class="dropdown" data-dropdown>
+      <button class="drop-btn" data-dropdown-button>Projeler ▾</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="tarot.html">Tarot Falı</a>
+        <a class="dropdown-item" href="2048.html">2048</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- APP PANEL -->
+  <div class="page-wrap">
+    <div id="tarot-app" class="card-panel"></div>
+  </div>
+
+  <!-- Lottie player -->
+  <script type="module">
+    import { DotLottie } from "https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web/+esm";
+    new DotLottie({
+      autoplay: true,
+      loop: true,
+      canvas: document.getElementById("dotlottie-canvas"),
+      src: "https://lottie.host/5bff608f-bb24-4f26-9d58-c91f25c2ab23/KfmHyRGjkq.lottie"
+    });
+  </script>
+</body>
+</html>

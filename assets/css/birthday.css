@@ -1,0 +1,8 @@
+/* Birthday küçük görsel dokunuşlar */
+.cake-wrap img{display:block}
+.modal .cake-wrap svg{filter:drop-shadow(0 6px 18px rgba(0,0,0,.08))}
+.modal .cake-wrap img{box-shadow:0 8px 24px rgba(0,0,0,.12)}
+
+/* DENIZIM birthday dokunuslari */
+.modal .cake-wrap svg{filter:drop-shadow(0 6px 18px rgba(0,128,128,.14))}
+.modal .cake-wrap img{box-shadow:0 10px 26px rgba(82,54,41,.16)}

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <title>DENIZIM</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <!-- Ana stiller -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <!-- Gate ve Birthday ek stiller -->
+  <link rel="stylesheet" href="assets/css/gate.css" />
+  <link rel="stylesheet" href="assets/css/birthday.css" />
+
+  <!-- UI (mevcutsa bırak) -->
+  <script src="assets/js/ui.js" defer></script>
+  <!-- Gate (şifre) -->
+  <script src="assets/js/gate.js" defer></script>
+  <!-- Birthday (Firestore) -->
+  <script type="module" src="assets/js/birthday.js"></script>
+</head>
+<body class="home-page">
+  <!-- Loader (Lottie) -->
+  <div id="loader-overlay" class="loader-overlay hidden" aria-hidden="true">
+    <canvas id="dotlottie-canvas" width="600" height="600"></canvas>
+  </div>
+
+  <!-- Konfeti tuvali (birthday kullanır) -->
+  <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  <!-- GATE: Şifre ekranı -->
+  <div id="gate-overlay" class="gate-overlay" aria-hidden="false">
+    <div class="gate-card">
+      <div class="gate-logo"><img class="gate-logo-img" src="assets/media/brownie-logo-cropped.png" alt="Logo"></div>
+      <div class="gate-title">Giriş</div>
+      <p class="gate-sub muted">Devam etmek için şifreyi gir.</p>
+      <form id="gate-form" autocomplete="off">
+        <div class="gate-input-wrap">
+          <input id="gate-input" type="password" inputmode="numeric" placeholder="Şifre (8 hane)" maxlength="12" />
+          <button class="gate-submit" type="submit" aria-label="Giriş">→</button>
+        </div>
+        <div id="gate-hint" class="gate-hint" role="status" aria-live="polite"></div>
+      </form>
+      <div class="gate-foot muted">© <span id="y"></span> — Özel erişim</div>
+    </div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a class="brand logo-brand" href="index.html" id="brand-text"><img class="brand-logo-img" src="assets/media/brownie-logo-cropped.png" alt="Logo"></a>
+    <div class="spacer"></div>
+    <a class="nav-link active" href="index.html">Ana Sayfa</a>
+    <div class="dropdown" data-dropdown>
+      <button class="drop-btn" data-dropdown-button>Projeler ▾</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="projects/tarot.html">Tarot Falı</a>
+        <a class="dropdown-item" href="projects/2048.html">2048</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Birthday banner mount -->
+  <div id="bday-banner-mount"></div>
+
+  <!-- HERO -->
+  <main class="hero">
+    <section class="hero-card">
+      <span class="hero-pill" id="hero-pill">Hoş Geldin</span>
+      <h1 class="hero-title" id="hero-title">DENIZIM</h1>
+      <a class="cta-btn" id="hero-cta" href="projects/tarot.html">Projeye Git</a>
+    </section>
+  </main>
+
+  <!-- Modal kökü -->
+  <div id="modal-root" class="modal-overlay hidden" aria-hidden="true"></div>
+
+  <!-- Lottie player -->
+  <script type="module">
+    import { DotLottie } from "https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web/+esm";
+    const cnv = document.getElementById("dotlottie-canvas");
+    if (cnv) {
+      new DotLottie({
+        autoplay: true,
+        loop: true,
+        canvas: cnv,
+        src: "https://lottie.host/5bff608f-bb24-4f26-9d58-c91f25c2ab23/KfmHyRGjkq.lottie",
+      });
+    }
+    const yEl = document.getElementById('y'); if (yEl) yEl.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

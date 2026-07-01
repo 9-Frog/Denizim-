@@ -1,0 +1,228 @@
+/* Başlık & metin */
+#tarot-app h2{ margin:0 0 6px; font-size:22px; display:flex; gap:10px; align-items:center; }
+#tarot-app .muted{ color:#666; }
+
+/* Form yerleşimi */
+.section{ margin-top:14px; }
+.row{ display:grid; gap:14px; }
+.row-2{ grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px; }
+input, select, textarea{
+  width:100%; padding:12px 14px; font-size:15px; border:1px solid #ddd; border-radius:12px; background:#fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.05); outline:none;
+}
+textarea{ min-height:90px; resize:vertical; }
+.btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 16px; border:none; border-radius:12px; background:#111; color:#fff; font-weight:800; cursor:pointer; box-shadow:0 10px 22px rgba(0,0,0,.16); }
+.btn.dark{ background:#222; }
+.pill{ display:inline-block; padding:6px 10px; border-radius:999px; background:#fff3e6; color:#7a4c0a; font-size:12px; font-weight:800; border:1px solid #f8e0c3; }
+
+/* Desteler grid */
+.decks{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:14px; margin-top:12px; }
+.deck{
+  position:relative;
+  display:flex; align-items:center; gap:14px;
+  background:#fff; border:1px solid #eee; border-radius:14px; padding:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.08); cursor:pointer; transition:.16s transform,.2s box-shadow;
+  text-align:left;
+}
+.deck:hover{ transform: translateY(-2px); box-shadow:0 10px 24px rgba(0,0,0,.12); }
+.deck-meta .deck-title{ font-weight:800; margin-bottom:4px; }
+
+/* GERÇEKÇİ DESTE STACK */
+.deck-stack{
+  position:relative; width:94px; height:120px; flex:0 0 auto; overflow:visible;
+}
+.deck-stack img{
+  position:absolute; width:68px; height:102px; object-fit:cover;
+  left:10px; top:8px;
+  border-radius:14px; border:1px solid #e9e9e9; background:#fff;
+  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+  transition: transform .25s ease, box-shadow .25s ease, left .25s ease, top .25s ease;
+}
+
+/* hafif düzensiz yayılım */
+.deck-stack img:nth-child(1){ transform: rotate(-7deg); left:0px; top:14px; }
+.deck-stack img:nth-child(2){ transform: rotate(-3deg); left:6px; top:10px; }
+.deck-stack img:nth-child(3){ transform: rotate(0deg);  left:12px; top:6px; }
+.deck-stack img:nth-child(4){ transform: rotate(3deg);  left:18px; top:10px; }
+.deck-stack img:nth-child(5){ transform: rotate(7deg);  left:24px; top:14px; }
+
+/* hover’da biraz daha açılarak “fan” etkisi */
+.deck:hover .deck-stack img:nth-child(1){ left:-4px; top:18px; transform: rotate(-9deg); }
+.deck:hover .deck-stack img:nth-child(2){ left:4px;  top:12px; transform: rotate(-5deg); }
+.deck:hover .deck-stack img:nth-child(3){ left:14px; top:6px;  transform: rotate(0deg); }
+.deck:hover .deck-stack img:nth-child(4){ left:26px; top:12px; transform: rotate(5deg); }
+.deck:hover .deck-stack img:nth-child(5){ left:38px; top:18px; transform: rotate(9deg); }
+
+/* Kart ızgarası */
+.cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:14px; margin-top:12px; }
+
+/* Kart kabı – hover lift */
+.card{
+  position:relative; cursor:pointer; border-radius:18px;
+  perspective:1200px; -webkit-perspective:1200px;
+  transition: transform .18s ease;
+}
+.card:hover{ transform: translateY(-6px); }
+
+/* İç blok: flip bu elemana uygulanır */
+.card-inner{
+  position:relative; width:100%; aspect-ratio:2/3; border-radius:18px; overflow:hidden;
+  transform-style:preserve-3d; -webkit-transform-style:preserve-3d;
+  transition: transform .6s cubic-bezier(.2,.7,.1,1), box-shadow .25s;
+  background:#fff; border:1px solid #e9e9e9; box-shadow: 0 8px 18px rgba(0,0,0,.10);
+}
+.card:hover .card-inner{
+  box-shadow: 0 0 0 1px #ffbd7a inset, 0 12px 20px rgba(0,0,0,.10);
+}
+.card.flipped .card-inner{ transform: rotateY(180deg); }
+
+/* Yüzler – opasite ile garanti görünürlük */
+.back, .face{
+  position:absolute; inset:0; display:grid; place-items:center; background:#fff;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  transition: transform .6s cubic-bezier(.2,.7,.1,1), opacity .3s ease;
+}
+
+/* Başlangıç: arka yüz önde, ön yüz 180° ve gizli */
+.back{ transform: rotateY(0deg); opacity:1; z-index:2; }
+.face{ transform: rotateY(180deg); opacity:0; z-index:1; }
+
+/* Flip sonrası */
+.card.flipped .back{ transform: rotateY(180deg); opacity:0; z-index:1; }
+.card.flipped .face{ transform: rotateY(0deg); opacity:1; z-index:2; }
+
+/* Görseller sığsın */
+.back img, .face img{ width:100%; height:100%; object-fit:contain; pointer-events:none; }
+
+/* Seçim etiketi */
+.sel-badge{
+  position:absolute; bottom:6px; left:6px; background:#111; color:#fff; font-size:11px; font-weight:800; padding:4px 8px; border-radius:10px;
+}
+
+/* Yorum alanı */
+.reading{ margin-top:16px; padding:16px; background:#fff; border:1px solid #eee; border-radius:16px; box-shadow:0 6px 16px rgba(0,0,0,.08); }
+.reading .item{ background:#fdf1f1; border:1px solid #fde1e1; border-radius:12px; padding:12px; margin-top:10px; }
+.meta{ color:#666; font-size:12px; margin-bottom:6px; }
+
+/* Final galeri */
+.final-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(120px,1fr)); gap:12px; margin: 8px 0 16px; }
+.final-card{ background:#fff; border:1px solid #eee; border-radius:18px; padding:8px; box-shadow:0 6px 16px rgba(0,0,0,.08); }
+.final-card .img{ aspect-ratio:2/3; border-radius:12px; overflow:hidden; display:grid; place-items:center; background:#fafafa; }
+.final-card img{ width:100%; height:100%; object-fit:contain; }
+.final-card .cap{ font-size:12px; color:#444; margin-top:6px; text-align:center; }
+
+/* Hata vurgusu */
+.field-error{ outline: 3px solid #ffd09a; border-radius:12px; }
+
+/* DENIZIM tarot renk temasi */
+.tarot-page{
+  background:
+    radial-gradient(900px 680px at 12% 0%, rgba(255,182,193,.5), transparent 58%),
+    radial-gradient(760px 560px at 88% 10%, rgba(0,128,128,.16), transparent 58%),
+    linear-gradient(180deg, #fff7f8 0%, #ffe3e8 52%, #ffb6c1 100%);
+  min-height:100vh;
+}
+.tarot-page .navbar{
+  background:linear-gradient(180deg, rgba(255,247,248,.94), rgba(255,232,237,.76));
+  border-bottom-color:rgba(255,182,193,.52);
+  box-shadow:0 16px 38px rgba(82,54,41,.1), inset 0 1px 0 rgba(255,255,255,.78);
+}
+.tarot-page .brand,
+.tarot-page .nav-link,
+.tarot-page .drop-btn{
+  background:linear-gradient(180deg, rgba(82,54,41,.96), rgba(82,54,41,.86));
+  color:#fff;
+  border-color:rgba(82,54,41,.88);
+  box-shadow:0 12px 26px rgba(82,54,41,.18), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.tarot-page .brand:hover,
+.tarot-page .nav-link:hover,
+.tarot-page .drop-btn:hover{
+  background:linear-gradient(180deg, rgba(82,54,41,1), rgba(82,54,41,.9));
+  box-shadow:0 16px 32px rgba(82,54,41,.24), inset 0 1px 0 rgba(255,255,255,.16);
+}
+.tarot-page .dropdown-menu{
+  background:linear-gradient(180deg, rgba(255,247,248,.98), rgba(255,238,242,.94));
+  border-color:rgba(255,182,193,.58);
+  box-shadow:0 24px 48px rgba(82,54,41,.16), inset 0 1px 0 rgba(255,255,255,.8);
+}
+.tarot-page .dropdown-menu a:hover{
+  background:linear-gradient(180deg, rgba(255,182,193,.38), rgba(255,182,193,.22));
+  color:#523629;
+  box-shadow:0 10px 22px rgba(82,54,41,.1);
+}
+.tarot-page .card-panel{
+  background:linear-gradient(180deg, rgba(255,247,248,.9), rgba(255,244,246,.78));
+  border-color:rgba(255,182,193,.5);
+  box-shadow:0 26px 62px rgba(82,54,41,.16), inset 0 1px 0 rgba(255,255,255,.7);
+}
+#tarot-app h2{ color:#523629; }
+#tarot-app .muted,
+.meta,
+.final-card .cap{ color:rgba(82,54,41,.68); }
+
+input, select, textarea{
+  color:#523629;
+  background:rgba(255,247,248,.96);
+  border-color:rgba(255,182,193,.72);
+}
+input:focus, select:focus, textarea:focus{
+  border-color:#008080;
+  box-shadow:0 0 0 4px rgba(0,128,128,.12), inset 0 1px 2px rgba(82,54,41,.06);
+}
+
+.btn,
+.btn.dark{
+  background:linear-gradient(180deg, rgba(82,54,41,.98), rgba(82,54,41,.84));
+  color:#fff;
+  border:1px solid rgba(82,54,41,.88);
+  box-shadow:0 14px 30px rgba(82,54,41,.22), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.pill{
+  background:linear-gradient(180deg, rgba(255,182,193,.32), rgba(255,182,193,.18));
+  color:#523629;
+  border-color:rgba(255,182,193,.58);
+}
+
+.deck,
+.reading,
+.final-card{
+  background:linear-gradient(180deg, rgba(255,247,248,.94), rgba(255,247,248,.8));
+  border-color:rgba(255,182,193,.48);
+  box-shadow:0 14px 30px rgba(82,54,41,.1), inset 0 1px 0 rgba(255,255,255,.62);
+}
+.deck:hover{
+  border-color:rgba(0,128,128,.22);
+  box-shadow:0 18px 38px rgba(82,54,41,.14), inset 0 1px 0 rgba(255,255,255,.72);
+}
+.deck-stack img,
+.card-inner,
+.final-card .img{
+  background:#fff7f8;
+  border-color:rgba(255,182,193,.72);
+}
+.card:hover .card-inner{
+  box-shadow:0 0 0 1px rgba(0,128,128,.32) inset, 0 14px 28px rgba(82,54,41,.12);
+}
+.sel-badge{
+  background:#008080;
+  color:#fff;
+}
+.reading .item{
+  background:rgba(255,182,193,.18);
+  border-color:rgba(255,182,193,.62);
+}
+.field-error{
+  outline-color:#ffb6c1;
+}
+
+/* Istek uzerine desteleri olustur butonu */
+#tarot-app #btn-decks{
+  background:linear-gradient(180deg, rgba(82,54,41,.98), rgba(82,54,41,.84));
+  color:#fff;
+  border:1px solid rgba(82,54,41,.9);
+  box-shadow:0 14px 30px rgba(82,54,41,.24), inset 0 1px 0 rgba(255,255,255,.16);
+}
+#tarot-app #btn-decks:hover{
+  box-shadow:0 18px 38px rgba(82,54,41,.3), inset 0 1px 0 rgba(255,255,255,.18);
+}
