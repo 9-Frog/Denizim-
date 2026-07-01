@@ -84,6 +84,38 @@ const CARD_IMAGES = {
   "King of Pentacles":"https://steve-p.org/cards/small/sm_RWSa-P-KI.webp"
 };
 
+const DECK_THEME_STORAGE_KEY = 'denizim_tarot_deck_theme';
+const DECK_THEMES = {
+  simple: { label: 'Basit', folder: null },
+  lise: { label: 'Lise Dönemi', folder: 'lise' },
+  hellokitty: { label: 'hellokitty', folder: 'hellokitty' }
+};
+
+function loadDeckTheme(){
+  try{
+    const saved = localStorage.getItem(DECK_THEME_STORAGE_KEY);
+    return DECK_THEMES[saved] ? saved : 'simple';
+  }catch(_err){
+    return 'simple';
+  }
+}
+function saveDeckTheme(theme){
+  try{ localStorage.setItem(DECK_THEME_STORAGE_KEY, theme); }catch(_err){}
+}
+function activeThemeFolder(){
+  return DECK_THEMES[state.deckTheme]?.folder || null;
+}
+function cardBackImage(){
+  const folder = activeThemeFolder();
+  if(!folder) return CARD_BACK_IMAGE_URL;
+  return `../assets/media/tarot-card-photos/${folder}/kart arkasi.png`;
+}
+function cardImage(cardName){
+  const folder = activeThemeFolder();
+  if(!folder) return CARD_IMAGES[cardName] || '';
+  return `../assets/media/tarot-card-photos/${folder}/${cardName.toLowerCase()}.png`;
+}
+
 /* ========= Tarot veri ========= */
 const MAJOR = [
   'The Fool','The Magician','The High Priestess','The Empress','The Emperor','The Hierophant',
@@ -529,6 +561,7 @@ const positions = {
 const state = {
   name:"", mode:null, category:null, commentLengthLabel:"Orta",
   yesnoQuestion:"",
+  deckTheme: loadDeckTheme(),
   decksMeta:null, chosenDeckIndex:null,
   needSelect:0, selectedCards:[]
 };
@@ -609,6 +642,25 @@ function render(){
     </div>
   `;
 
+  const titleEl = root.querySelector('h2');
+  if(titleEl){
+    const titleRow = document.createElement('div');
+    titleRow.className = 'tarot-title-row';
+    titleRow.innerHTML = `
+      <div class="tarot-title-copy"></div>
+      <div class="theme-picker">
+        <label class="muted" for="sel-theme">Deste Teması Seç</label>
+        <select id="sel-theme" class="theme-select" aria-label="Deste Teması Seç">
+          <option value="simple" ${state.deckTheme==='simple'?'selected':''}>Basit</option>
+          <option value="lise" ${state.deckTheme==='lise'?'selected':''}>Lise Dönemi</option>
+          <option value="hellokitty" ${state.deckTheme==='hellokitty'?'selected':''}>hellokitty</option>
+        </select>
+      </div>
+    `;
+    titleRow.querySelector('.tarot-title-copy').appendChild(titleEl);
+    root.prepend(titleRow);
+  }
+
   if(state.mode === 'one'){
     root.insertAdjacentHTML('beforeend', `
       <div class="section">
@@ -647,7 +699,8 @@ function render(){
       const decksEl = wrap.querySelector('#decks');
 
       state.decksMeta.decks.forEach((deck,i)=>{
-        const stackImgs = Array.from({length:5}).map(()=>`<img src="${CARD_BACK_IMAGE_URL}" alt="Deck">`).join('');
+        const deckBack = escapeHtml(cardBackImage());
+        const stackImgs = Array.from({length:5}).map(()=>`<img src="${deckBack}" alt="Deste">`).join('');
         decksEl.insertAdjacentHTML('beforeend', `
           <button class="deck deck-btn" data-i="${i}" type="button" aria-label="Deste ${i+1}">
             <div class="deck-stack">${stackImgs}</div>
@@ -695,10 +748,12 @@ function render(){
         const cardData = ALL_CARDS[cardId];
         const el = document.createElement('div');
         el.className = 'card';
+        const backImg = escapeHtml(cardBackImage());
+        const faceImg = escapeHtml(cardImage(cardData.name));
         el.innerHTML = `
           <div class="card-inner">
-            <div class="back"><img alt="back" src="${CARD_BACK_IMAGE_URL}"></div>
-            <div class="face"><img alt="${escapeHtml(cardData.name)}" src="${CARD_IMAGES[cardData.name]||''}"></div>
+            <div class="back"><img alt="Kart arkası" src="${backImg}"></div>
+            <div class="face"><img alt="${escapeHtml(cardData.name)}" src="${faceImg}"></div>
           </div>
         `;
         el.addEventListener('click', ()=>{
@@ -707,7 +762,7 @@ function render(){
           playSfx(CARD_FLIP_SFX, 0.46);
           el.classList.add('flipped');
           el.insertAdjacentHTML('beforeend', `<div class="sel-badge">#${state.selectedCards.length+1}</div>`);
-          state.selectedCards.push({ id: cardId, name: cardData.name, img: CARD_IMAGES[cardData.name]||'' });
+          state.selectedCards.push({ id: cardId, name: cardData.name });
           if(state.selectedCards.length === state.needSelect){
             setTimeout(()=>render(), 600);
           }
@@ -748,9 +803,10 @@ function renderFinal(){
 
   const gallery = document.getElementById('final-grid');
   state.selectedCards.forEach((c,i)=>{
+    const img = escapeHtml(cardImage(c.name));
     gallery.insertAdjacentHTML('beforeend', `
       <div class="final-card">
-        <div class="img"><img src="${c.img}" alt="${escapeHtml(c.name)}"></div>
+        <div class="img"><img src="${img}" alt="${escapeHtml(c.name)}"></div>
         <div class="cap">#${i+1} • ${escapeHtml(c.name)}</div>
       </div>
     `);
@@ -786,6 +842,7 @@ function bindInputs(){
   const nameEl = document.getElementById('inp-name');
   const modeEl = document.getElementById('sel-mode');
   const lenEl  = document.getElementById('sel-len');
+  const themeEl = document.getElementById('sel-theme');
   const catEl  = document.getElementById('sel-cat');
   const ynEl   = document.getElementById('inp-yn');
   const decksBtn = document.getElementById('btn-decks');
@@ -797,6 +854,12 @@ function bindInputs(){
     render();
   });
   if(lenEl) lenEl.addEventListener('change', e=>{ state.commentLengthLabel = e.target.value; });
+  if(themeEl) themeEl.addEventListener('change', e=>{
+    state.deckTheme = DECK_THEMES[e.target.value] ? e.target.value : 'simple';
+    saveDeckTheme(state.deckTheme);
+    state.selectedCards = [];
+    render();
+  });
   if(catEl) catEl.addEventListener('change', e=>{ state.category = e.target.value || null; });
   if(ynEl) ynEl.addEventListener('input', e=>{ state.yesnoQuestion = e.target.value; });
 
