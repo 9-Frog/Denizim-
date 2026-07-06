@@ -25,6 +25,8 @@
   const jumpscareOverlay = document.getElementById('jumpscare-overlay');
   const jumpscareAudio = document.getElementById('jumpscare-audio');
   const closeJumpscareBtn = document.getElementById('close-jumpscare');
+  const gameOverVideoOverlay = document.getElementById('game-over-video-overlay');
+  const gameOverVideo = document.getElementById('game-over-video');
   const playerBestEls = {
     Hakan: document.querySelector('[data-player-best="Hakan"]'),
     Deniz: document.querySelector('[data-player-best="Deniz"]')
@@ -632,6 +634,62 @@
     return false;
   }
 
+  function isGameOverVideoOpen() {
+    return !!gameOverVideoOverlay && !gameOverVideoOverlay.classList.contains('hidden');
+  }
+
+  function hideGameOverVideo() {
+    if (!gameOverVideoOverlay || !gameOverVideo) return;
+    gameOverVideo.pause();
+    try {
+      gameOverVideo.currentTime = 0;
+    } catch (error) {
+      // Video henuz metadata yuklemediyse currentTime ayari atlanir.
+    }
+    gameOverVideoOverlay.classList.add('hidden');
+    gameOverVideoOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  function restartAfterGameOverVideo() {
+    hideGameOverVideo();
+    game.processing = false;
+    resetGameState();
+    updateHUD();
+    updateLockUI();
+    setBoardMessage(game.unlocked ? `${game.selectedUser} için yeni oyun hazır.` : 'Yeni oyun hazır.');
+  }
+
+  function playGameOverVideo() {
+    if (!gameOverVideoOverlay || !gameOverVideo) {
+      restartAfterGameOverVideo();
+      return;
+    }
+    gameOverVideoOverlay.classList.remove('hidden');
+    gameOverVideoOverlay.setAttribute('aria-hidden', 'false');
+    gameOverVideo.muted = false;
+    gameOverVideo.volume = 1;
+    gameOverVideo.removeAttribute('muted');
+    gameOverVideo.pause();
+    try {
+      gameOverVideo.currentTime = 0;
+    } catch (error) {
+      // Video henuz metadata yuklemediyse bastan oynatma tarayiciya birakilir.
+    }
+    const playback = gameOverVideo.play();
+    if (playback && typeof playback.catch === 'function') {
+      playback.catch(() => {});
+    }
+  }
+
+  function handleGameOver() {
+    if (game.hasLost) return;
+    game.hasLost = true;
+    maybeUpdateBest();
+    updateHUD();
+    setBoardMessage('Hamle kalmadı. Video bitince yeni oyun başlayacak.', 'over');
+    playGameOverVideo();
+  }
+
   function maybeUpdateBest() {
     if (!game.selectedUser) return;
     if (game.score > currentBest()) {
@@ -672,7 +730,7 @@
   }
 
   function move(direction) {
-    if (!game.unlocked || game.processing || !jumpscareOverlay.classList.contains('hidden') || game.hasLost) return;
+    if (!game.unlocked || game.processing || !jumpscareOverlay.classList.contains('hidden') || isGameOverVideoOpen() || game.hasLost) return;
 
     game.processing = true;
     clearTileFlags();
@@ -700,16 +758,14 @@
       renderBoard();
       playTone('move');
       if (!canMove()) {
-        game.hasLost = true;
-        setBoardMessage('Hamle kalmadı. Yeni oyunla tekrar deneyebilirsin.', 'over');
+        handleGameOver();
       }
     } else if (!canMove()) {
-      game.hasLost = true;
-      setBoardMessage('Hamle kalmadı. Yeni oyunla tekrar deneyebilirsin.', 'over');
+      handleGameOver();
     }
 
     setTimeout(() => {
-      game.processing = false;
+      if (!isGameOverVideoOpen()) game.processing = false;
     }, 120);
   }
 
@@ -933,6 +989,9 @@
     jumpscareOverlay.addEventListener('click', (event) => {
       if (event.target === jumpscareOverlay) closeJumpscare();
     });
+    if (gameOverVideo) {
+      gameOverVideo.addEventListener('ended', restartAfterGameOverVideo);
+    }
   }
 
   init();
